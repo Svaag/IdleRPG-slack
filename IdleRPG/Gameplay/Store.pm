@@ -158,82 +158,19 @@ sub blackbuy_item {
     }
 }
 
+# a^(-bx)
 sub rest {
     my $u = shift;
-    my $IsEnding = 0;
-
-    if ($Simulation::rps{$u}{life} < 0) {
-        IRC::privmsg("You are a Zombie!", $Simulation::rps{$u}{nick});
-    }
-    elsif ($IsEnding == 0) {
-        if ($Simulation::rps{$u}{level} > 0) {
-            my $factor = int($Simulation::rps{$u}{level}/5);
-            if ($IsEnding == 1) {
-                $factor = 25;
-            }
-            my $pay = (100-$Simulation::rps{$u}{life})*$factor;
-            my $recover = int($Simulation::rps{$u}{gold}/$factor);
-            if ($Simulation::rps{$u}{gold} >= $pay && $Simulation::rps{$u}{life} < 100) {
-                $Simulation::rps{$u}{gold} -= $pay;
+            my $recover = int(100-$Simulation::rps{$u}{life});
+            my $ttlCost = (int(($Simulation::rps{$u}{next} * 0.0025)*$recover));
+            if ($Simulation::rps{$u}{life} < 100) {
+                $Simulation::rps{$u}{next} += $ttlCost;
                 $Simulation::rps{$u}{life} = 100;
-                IRC::chanmsg("$u rested to regain their life and has $Simulation::rps{$u}{gold} gold left.");
-            }
-            elsif ($Simulation::rps{$u}{life} < 100) {
-                if ($Simulation::rps{$u}{gold} > 0) {
-                    $Simulation::rps{$u}{gold} = 0;
-                    $Simulation::rps{$u}{life} += $recover;
-                    IRC::chanmsg("$u got $recover life restored.");
-                }
-                else {
-                    IRC::privmsg("You do not have any gold, you peasant...goto work!", $Simulation::rps{$u}{nick});
-                }
-
+                IRC::chanmsg("$u rested for ".Simulation::duration($ttlCost)." to regain their life.");
             }
             else {
                 IRC::privmsg("You are already rested.", $Simulation::rps{$u}{nick});
             }
-        }
-        else {
-            IRC::privmsg("You are at level 0 and do not need to rest yet.", $Simulation::rps{$u}{nick});
-        }
-    }
-    else {
-        if ($Simulation::rps{$u}{life} > 0) {
-            if ($Simulation::rps{$u}{level} > 0) {
-                my $factor = int($Simulation::rps{$u}{level}/5);
-                if ($IsEnding == 1) {
-                    $factor = 25;
-                }
-                my $pay = (100-$Simulation::rps{$u}{life})*$factor;
-                my $recover = int($Simulation::rps{$u}{gold}/$factor);
-                if ($Simulation::rps{$u}{gold} >= $pay && $Simulation::rps{$u}{life} < 100) {
-                    $Simulation::rps{$u}{gold} -= $pay;
-                    $Simulation::rps{$u}{life} = 100;
-                    IRC::chanmsg("$u fully regained their life and has $Simulation::rps{$u}{gold} gold left.");
-                }
-                elsif ($Simulation::rps{$u}{life} < 100) {
-                    if ($Simulation::rps{$u}{gold} > 0) {
-                        $Simulation::rps{$u}{gold} = 0;
-                        $Simulation::rps{$u}{life} += $recover;
-                        IRC::chanmsg("$u rested and got $recover life restored.");
-                    }
-                    else {
-                        IRC::privmsg("You do not have any gold, you peasant...goto work!", $Simulation::rps{$u}{nick});
-                    }
-
-                }
-                else {
-                    IRC::privmsg("You are already rested.", $Simulation::rps{$u}{nick});
-                }
-            }
-            else {
-                IRC::privmsg("You are at level 0 and do not need to rest yet.", $Simulation::rps{$u}{nick});
-            }
-        }
-        else {
-            IRC::privmsg("You are dead and forever restless.", $Simulation::rps{$u}{nick});
-        }
-    }
 }
 
 sub buy_mana {

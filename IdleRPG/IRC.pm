@@ -763,7 +763,7 @@ sub parse {
                     Store::buy_mana("$username");
                 }
                 elsif ($arg[4] eq "life") {
-                    Store::rest("$username");    
+                    IRC::privmsg("Life can no longer be bought. You need to 'rest'!", $usernick);
                 }
                 elsif (!defined($arg[5])) {
                     if($arg[4] eq "help") {
