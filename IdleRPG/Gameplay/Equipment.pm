@@ -114,7 +114,7 @@ sub item_special_use {
     elsif ($ItemUse eq "TTL") {
         $Amt = int($ThisAmount*.20);
         $Simulation::rps{$ThisPlayer}{next} -= $Amt;
-        IRC::chanmsg("$ThisPlayer has a TTL Stone and gets ".duration($Amt)." TTL removed!");
+        IRC::chanmsg("$ThisPlayer has a TTL Stone and gets ".Simulation::duration($Amt)." TTL removed!");
     }
     else {
         return;
