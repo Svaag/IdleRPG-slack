@@ -165,25 +165,25 @@ sub calamity {
             IRC::chanmsg(Simulation::clog("$player fell, chipping the stone in their amulet! $player\'s $type loses 10% effectiveness."));
         }
         elsif ($type eq "boots") {
-            IRC::chanmsg(Simulation::clog("$player stepped in some dragon shit! $player\'s $type loses 10% effectiveness."));
+            IRC::chanmsg(Simulation::clog("$player stepped in some acidic dragon droppings! $player\'s $type loses 10% effectiveness."));
         }
         elsif ($type eq "charm") {
             IRC::chanmsg(Simulation::clog("$player slipped and dropped their charm in a dirty bog! $player\'s $type loses 10% effectiveness."));
         }
         elsif ($type eq "gloves") {
-            IRC::chanmsg(Simulation::clog("$player tried to pick up some green slime! $player\'s $type loses 10% effectiveness."));
+            IRC::chanmsg(Simulation::clog("$player fought off a goblin and ripped their gloves! $player\'s $type loses 10% effectiveness."));
         }
         elsif ($type eq "helm") {
-            IRC::chanmsg(Simulation::clog("$player needs a haircut! $player\'s $type loses 10% effectiveness."));
+            IRC::chanmsg(Simulation::clog("$player hit their head on a branch! $player\'s $type loses 10% effectiveness."));
         }
         elsif ($type eq "leggings") {
-            IRC::chanmsg(Simulation::clog("$player burned a hole through their leggings while ironing! $player\'s $type loses 10% effectiveness."));
+            IRC::chanmsg(Simulation::clog("$player burned a hole through their leggings while fighting a dragon! $player\'s $type loses 10% effectiveness."));
         }
         elsif ($type eq "ring") {
             IRC::chanmsg(Simulation::clog("$player scratched their ring! $player\'s $type loses 10% effectiveness."));
         }
         elsif ($type eq "shield") {
-            IRC::chanmsg(Simulation::clog("$player\'s shield was damaged while polishing it $player\'s $type loses 10% effectiveness."));
+            IRC::chanmsg(Simulation::clog("$player stubmled when fighting bandits and fell on their shield! $player\'s $type loses 10% effectiveness."));
         }
         elsif ($type eq "tunic") {
             IRC::chanmsg(Simulation::clog("$player spilled a level 7 shrinking potion on their tunic! $player\'s $type loses 10% effectiveness."));
@@ -226,7 +226,7 @@ sub godsend {
             IRC::chanmsg(Simulation::clog("$player\'s amulet was blessed by a passing cleric! $player\'s $type gains 10% effectiveness."));
         }
         elsif ($type eq "boots") {
-            IRC::chanmsg(Simulation::clog("$player\'s boots were shined! $player\'s $type gains 10% effectiveness."));
+            IRC::chanmsg(Simulation::clog("$player\'s boots were imbued with strength at a local moonwell! $player\'s $type gains 10% effectiveness."));
         }
         elsif ($type eq "charm") {
             IRC::chanmsg(Simulation::clog("$player\'s charm ate a bolt of lightning! $player\'s $type gains 10% effectiveness."));
@@ -235,22 +235,22 @@ sub godsend {
             IRC::chanmsg(Simulation::clog("The local wizard imbued $player\'s gloves with dragon claw powder! $player\'s $type gains 10% effectiveness."));
         }
         elsif ($type eq "helm") {
-            IRC::chanmsg(Simulation::clog("The blacksmith added an MP3 player to $player\'s helm! $player\'s $type gains 10% effectiveness."));
+            IRC::chanmsg(Simulation::clog("The blacksmith added horns to $player\'s helm! $player\'s $type gains 10% effectiveness."));
         }
         elsif ($type eq "leggings") {
-            IRC::chanmsg(Simulation::clog("$player\'s $type were dry cleaned...finally! $player\'s $type gains 10% effectiveness."));
+            IRC::chanmsg(Simulation::clog("$player\'s $type were strengthened by a kind leatherworker! $player\'s $type gains 10% effectiveness."));
         }
         elsif ($type eq "ring") {
-            IRC::chanmsg(Simulation::clog("$player had the gem in their ring reset! $player\'s $type gains 10% effectiveness."));
+            IRC::chanmsg(Simulation::clog("$player found a diamond for their ring! $player\'s $type gains 10% effectiveness."));
         }
         elsif ($type eq "shield") {
             IRC::chanmsg(Simulation::clog("$player reinforced their shield with dragon scales! $player\'s $type gains 10% effectiveness."));
         }
         elsif ($type eq "tunic") {
-            IRC::chanmsg(Simulation::clog("A magician cast a spell of Rigidity on $player\'s tunic! $player\'s $type gains 10% effectiveness."));
+            IRC::chanmsg(Simulation::clog("A magician cast a spell of rigidity on $player\'s tunic! $player\'s $type gains 10% effectiveness."));
         }
         else {
-            IRC::chanmsg(Simulation::clog("$player sharpened the edge of their weapon! $player\'s $type gains 10% effectiveness."));
+            IRC::chanmsg(Simulation::clog("$player put a rune of burning on their weapon! $player\'s $type gains 10% effectiveness."));
         }
         my $suffix="";
         if ($Simulation::rps{$player}{item}{$type} =~ /(\D)$/) { $suffix=$1; }
@@ -285,11 +285,11 @@ sub hog {
     my $win = int(rand(5));
     my $time = int(((5 + int(rand(71)))/100) * $Simulation::rps{$player}{next});
     if ($win) {
-        IRC::chanmsg(Simulation::clog("The Hand of God carried $player ".Simulation::duration($time)." toward level ".($Simulation::rps{$player}{level}+1)."."));
+        IRC::chanmsg(Simulation::clog("The God of Luck carried $player ".Simulation::duration($time)." toward level ".($Simulation::rps{$player}{level}+1)."."));
         $Simulation::rps{$player}{next} -= $time;
     }
     else {
-        IRC::chanmsg(Simulation::clog("Lucifer consumed $player with fire, adding ".Simulation::duration($time)." from level ".($Simulation::rps{$player}{level}+1)."."));
+        IRC::chanmsg(Simulation::clog("The Dark Lord consumed $player with fire, adding ".Simulation::duration($time)." from level ".($Simulation::rps{$player}{level}+1)."."));
         $Simulation::rps{$player}{next} += $time;
     }
     IRC::chanmsg("$player reaches next level in ".Simulation::duration($Simulation::rps{$player}{next}).".");
