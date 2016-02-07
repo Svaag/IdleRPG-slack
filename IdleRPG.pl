@@ -37,7 +37,7 @@ our $version = "1.0.0";
 Database::checkdbfile();
 
 # Daemonize
-#Bot::daemonize();
+Bot::daemonize();
 
 # Start up the game loop! 
 IdleRPG::Slack::start();
