@@ -27,215 +27,38 @@ our $primnick = $Options::opts{botnick};
 
 my $lastreg = 0;
 my $registrations = 0;
-my $conn_tries = 0;
-my $outbytes = 0;
-my $inbytes = 0;
-my $freemessages = 4;
 my %prev_online;
-my %split;
-our %auto_login;
 our $lasttime = 1;
 our %onchan;
-our $sock;
-our @queue;
-our $sel;
-
-sub connect {
-
-IRC::createSocket();
-
-if (!$IRC::sock) {
-    Bot::debug("Failed to connect to all servers\r\n");
-    exit 1;
-}
-
-$sel = IO::Select->new($IRC::sock);
-IRC::sts("PASS $Options::opts{password}");
-IRC::sts("NICK $Options::opts{botnick}");
-IRC::sts("USER $Options::opts{botnick} 0 0 :$Options::opts{botnick}");
-
-}
-
-
-sub createSocket {
- while (!$sock && $conn_tries < 2*@{$Options::opts{servers}}) {
-    Bot::debug("Connecting to: $Options::opts{servers}->[0]\r\n");
-    my %sockinfo = (PeerAddr => $Options::opts{servers}->[0]);
-    if ($Options::opts{localaddr}) {
-        $sockinfo{LocalAddr} = $Options::opts{localaddr};
-    }
-    if ($Options::opts{ipv6}) {
-        $sock = IO::Socket::INET6->new(%sockinfo);
-    }
-    else {
-        $sock = IO::Socket::INET->new(%sockinfo);
-    }
-
-    ++$conn_tries;
-
-    if (!$sock) {
-        Bot::debug("Socket closed; Moving server to end of list\r\n");
-        push(@{$Options::opts{servers}},shift(@{$Options::opts{servers}}));
-    }
- }
-
-}
-
-sub sts {
-    my($text,$skipq) = @_;
-    if ($skipq) {
-        if ($sock) {
-            Bot::debug("sts(): $text\r\n");
-            print $sock "$text\r\n";
-            $outbytes += length($text) + 2;
-        }
-        else {
-            Bot::debug("sts(): clear queue\r\n");
-            undef(@queue);
-            return;
-        }
-    }
-    else {
-        Bot::debug("sts(): queue: $text\r\n");
-        push(@queue,$text);
-    }
-}
-
-sub fq {
-    if (!@queue) {
-        ++$freemessages if $freemessages < 4;
-        return undef;
-    }
-    my $sentbytes = 0;
-    for (0..$freemessages) {
-        last() if !@queue;
-        my $line=shift(@queue);
-        if ($_ != 0 && (length($line)+$sentbytes) > 768) {
-            Bot::debug("fq(): dequeue: $line\r\n");
-            unshift(@queue,$line);
-            last();
-        }
-        if ($sock) {
-            --$freemessages if $freemessages > 0;
-            Bot::debug("fq(): $line\r\n");
-            print $sock "$line\r\n";
-            $sentbytes += length($line) + 2;
-        }
-        else {
-            Bot::debug("fq(): clear queue\r\n");
-            undef(@queue);
-            last();
-        }
-        $outbytes += length($line) + 2;
-    }
-}
 
 sub chanmsg {
     my $msg = shift or return undef;
-    privmsg($msg, $Options::opts{botchan}, shift);
+    IdleRPG::Slack::send_channel_message($msg);
 }
 
 sub privmsg {
     my $msg = shift or return undef;
     my $target = shift or return undef;
-    my $force = shift;
 
-    while (length($msg)) {
-        sts("PRIVMSG $target :".substr($msg,0,450),$force);
-        substr($msg,0,450)="";
-    }
-}
+    IdleRPG::Slack::send_direct_message($msg, $target);
 
-sub notice {
-    my $msg = shift or return undef;
-    my $target = shift or return undef;
-    my $force = shift;
-
-    while (length($msg)) {
-        sts("NOTICE $target :".substr($msg,0,450),$force);
-        substr($msg,0,450)="";
-    }
 }
 
 sub parse {
     my($in) = shift;
-    $inbytes += length($in);
     $in =~ s/[\r\n]//g;
     Bot::debug("parse(): $in\r\n");
     my @arg = split(/\s/,$in);
-    my $usernick = substr((split(/!/,$arg[0]))[0],1);
+    my $usernick = $arg[0];
     my $username = finduser($usernick);
-    if (lc($arg[0]) eq 'ping') { IRC::sts("PONG $arg[1]",1); }
-    elsif (lc($arg[0]) eq 'error') {
-        $Simulation::rps{$_}{online}=1 for keys(%auto_login);
-        Database::writejsondb(\%Simulation::rps);
-        return;
-    }
     $arg[1] = lc($arg[1]);
-    if ($arg[1] eq '433' && $Options::opts{botnick} eq $arg[3]) {
-        $Options::opts{botnick} .= int(rand(999));
-        IRC::sts("NICK $Options::opts{botnick}");
-    }
-    elsif ($arg[1] eq 'join') {
-        $onchan{$usernick}=time();
-        if ($Options::opts{botnick} eq $usernick) {
-            IRC::sts("WHO $Options::opts{botchan}");
-            $lasttime = time();
-        }
-    }
-    elsif ($arg[1] eq 'quit') {
-        Level::penalize($username,"quit");
-        delete($onchan{$usernick});
-    }
-    elsif ($arg[1] eq 'nick') {
-        if ($usernick eq $Options::opts{botnick}) {
-            $Options::opts{botnick} = substr($arg[2],1);
-        }
-        else {
-            Level::penalize($username,"nick",$arg[2]);
-            $onchan{substr($arg[2],1)} = delete($onchan{$usernick});
-        }
-    }
-    elsif ($arg[1] eq 'part') {
-        Level::penalize($username,"part");
-        delete($onchan{$usernick});
-    }
-    elsif ($arg[1] eq 'kick') {
-        $usernick = $arg[3];
-        Level::penalize(finduser($usernick),"kick");
-        delete($onchan{$usernick});
-    }
-    elsif ($arg[1] eq 'notice' && $arg[2] ne $Options::opts{botnick}) {
-        Level::penalize($username,"notice",length("@arg[3..$#arg]")-1);
-    }
-   elsif ($arg[1] eq 'privmsg' && $arg[2] eq $Options::opts{botchan}) {
+    if ($arg[1] eq 'privmsg' && $arg[2] eq $Options::opts{botchan}) {
         Level::penalize($username,"privmsg",length("@arg[3..$#arg]")-1);
     }
-    elsif ($arg[1] eq '001') {
-        IRC::sts("MODE $Options::opts{botnick} :$Options::opts{botmodes}");
-        IRC::sts("JOIN $Options::opts{botchan}");
-        $Options::opts{botchan} =~ s/ .*//;
-    }
-    elsif ($arg[1] eq '315') {
-        Quests::loadquestfile();
-    }
-    elsif ($arg[1] eq '005') {
-        if ("@arg" =~ /MODES=(\d+)/) { $Options::opts{modesperline}=$1; }
-    }
-    elsif ($arg[1] eq '352') {
-        my $user;
-        $onchan{$arg[7]}=time();
-        if (exists($prev_online{$arg[7]."!".$arg[4]."\@".$arg[5]})) {
-            $Simulation::rps{$prev_online{$arg[7]."!".$arg[4]."\@".$arg[5]}}{online} = 1;
-            $auto_login{$prev_online{$arg[7]."!".$arg[4]."\@".$arg[5]}}=1;
-        }
-    }
     elsif ($arg[1] eq 'privmsg') {
-        $arg[0] = substr($arg[0],1);
         if (lc($arg[2]) eq lc($Options::opts{botnick})) {
-            $arg[3] = lc(substr($arg[3],1));
             if ($arg[3] eq "version") {
-                IRC::privmsg("VERSION IRPG bot v$main::version by raz.",$usernick); ###raz### ;^)-~~
+                IRC::privmsg("IdleRPG-Slack $Main::version",$usernick); 
             }
             elsif ($arg[3] eq "peval" && $Options::opts{peval}) {
                 if (!ha($username) || ($Options::opts{ownerpevalonly} && $Options::opts{owner} ne $username)) {
@@ -410,50 +233,6 @@ sub parse {
                     IRC::privmsg("Account $arg[4] is no longer a bot admin.",$usernick, 1);
                 }
             }
-            elsif ($arg[3] eq "hog") {
-                if (!ha($username)) {
-                    IRC::privmsg("You don't have access to HoG.", $usernick);
-                }
-                else {
-                    hog();
-                }
-            }
-            elsif ($arg[3] eq "calamity") {
-                if (!ha($username)) {
-                    IRC::privmsg("You don't have access to CALAMITY.", $usernick);
-                }
-                else {
-                    IRC::chanmsg("$usernick has summoned Lucifer.");
-                    Events::calamity();
-                }
-            }
-            elsif ($arg[3] eq "hunt") {
-                if (!ha($username)) {
-                    IRC::privmsg("You don't have access to HUNT.", $usernick);
-                }
-                else {
-                    IRC::chanmsg("$usernick has called a monster hunt.");
-                    Events::monst_hunt();
-                }
-            }
-            elsif ($arg[3] eq "monst") {
-                if (!ha($username)) {
-                    IRC::privmsg("You don't have access to MONST.", $usernick);
-                }
-                else {
-                    IRC::chanmsg("$usernick has summoned a monster.");
-                    Events::monst_attack();
-                }
-            }
-            elsif ($arg[3] eq "lottery") {
-                if (!ha($username)) {
-                    IRC::privmsg("You don't have access to Lottery.", $usernick);
-                }
-                else {
-                    IRC::chanmsg("$usernick has started the Lottery.");
-                    Events::lottery();
-                }
-            }
             elsif ($arg[3] eq "top") {
                 if (!ha($username)) {
                     IRC::privmsg("You don't have access to top.", $usernick);
@@ -478,60 +257,6 @@ sub parse {
                         " | Align $Simulation::rps{$u[$i]}{alignment} | Ability $Simulation::rps{$u[$i]}{ability}".
                         " | Life $Simulation::rps{$u[$i]}{life} | Sum $tempsum");
                     }
-                }
-            }
-            elsif ($arg[3] eq "challenge") {
-                if (!ha($username)) {
-                    IRC::privmsg("You don't have access to CHALLENGE.", $usernick);
-                }
-                elsif (!defined($arg[4])) {
-                    IRC::privmsg("Try: CHALLENGE <char name>", $usernick, 1);
-                }
-
-                elsif (!exists($Simulation::rps{$arg[4]})) {
-                    IRC::privmsg("No such account $arg[4].", $usernick, 1);
-                }
-                else {
-                    PVP::challenge_opp($arg[4]);
-                }
-            }
-            elsif ($arg[3] eq "godsend") {
-                if (!ha($username)) {
-                    IRC::privmsg("You don't have access to GODSEND.", $usernick);
-                }
-                else {
-                    Events::godsend();
-                }
-            }
-            elsif ($arg[3] eq "evilness") {
-                if (!ha($username)) {
-                    IRC::privmsg("You don't have access to EVILNESS.", $usernick);
-                }
-                else {
-                    Events::evilness();
-                    Events::evilnessOffline();
-                }
-            }
-            elsif ($arg[3] eq "goodness") {
-                if (!ha($username)) {
-                    IRC::privmsg("You don't have access to GOODNESS.", $usernick);
-                }
-                else {
-                    Events::goodness();
-                }
-            }
-            elsif ($arg[3] eq "item") {
-                if (!ha($username)) {
-                    IRC::privmsg("You don't have access to ITEM.", $usernick);
-                }
-                elsif (!defined($arg[4])) {
-                    IRC::privmsg("Try: ITEM <char name>", $usernick, 1);
-                }
-                elsif (!exists($Simulation::rps{$arg[4]})) {
-                    IRC::privmsg("No such account $arg[4].", $usernick, 1);
-                }
-                else {
-                    Equipment::find_item($arg[4]);
                 }
             }
             elsif ($arg[3] eq "rehash") {
@@ -572,21 +297,6 @@ sub parse {
                 else {
                     $Simulation::rps{$arg[4]}{nick} = $arg[5];
                     IRC::privmsg("NICK for $arg[4] has been changed.", $usernick, 1);
-                }
-            }
-            elsif ($arg[3] eq "chhost") {
-                if (!ha($username)) {
-                    IRC::privmsg("You don't have access to CHHOST.", $usernick);
-                }
-                elsif (!defined($arg[5])) {
-                    IRC::privmsg("Try: CHHOST USER NICK!IDENT AT HOST", $usernick, 1);
-                }
-                elsif (!exists($Simulation::rps{$arg[4]})) {
-                    IRC::privmsg("No such username $arg[4].", $usernick, 1);
-                }
-                else {
-                    $Simulation::rps{$arg[4]}{userhost} = $arg[5];
-                    IRC::privmsg("USERHOST for $arg[4] has been changed.", $usernick, 1);
                 }
             }
             elsif ($arg[3] eq "chuser") {
@@ -675,9 +385,6 @@ sub parse {
                 elsif (!exists($Simulation::rps{$arg[4]})) {
                     IRC::privmsg("FIGHT Request Denied: No such account $arg[4].", $usernick, 1);
                 }
-                elsif ($Simulation::rps{$arg[4]}{online} < 1) {
-                    IRC::privmsg("FIGHT Request Denied: Please select an online apponent.", $usernick, 1);
-                }
                 elsif ($arg[4] eq $username) {
                     IRC::privmsg("FIGHT Request Denied: Cannot FIGHT yourself.", $usernick, 1);
                 }
@@ -698,7 +405,7 @@ sub parse {
                 if (!defined($username)) {
                     IRC::privmsg("ATTACK Request Denied: You are not logged in.", $usernick);
                 }
-                                                                                                        elsif ($Simulation::rps{$username}{level} < 15) {
+                elsif ($Simulation::rps{$username}{level} < 15) {
                     IRC::privmsg("ATTACK Request Denied: Command available to level 15+ users only.", $usernick, 1);
                 }
                 elsif ($Simulation::rps{$username}{life} < 10) {
@@ -1187,15 +894,6 @@ sub parse {
                     IRC::privmsg("Your password was changed.",$usernick);
                 }
             }
-            elsif ($arg[3] eq "backup") {
-                if (!ha($username)) {
-                    IRC::privmsg("You do not have access to BACKUP.", $usernick);
-                }
-                else {
-                    backup();
-                    IRC::privmsg("$Options::opts{dbfile} was backed up.",$usernick,1);
-                }
-            }
             elsif ($arg[3] eq "align") {
                 if (!defined($username)) {
                     IRC::privmsg("You are not logged in.", $usernick)
@@ -1333,86 +1031,66 @@ sub parse {
                     exec("perl $0");
                 }
             }
-            elsif ($arg[3] eq "clearq") {
-                if (!ha($username)) {
-                    IRC::privmsg("You do not have access to CLEARQ.", $usernick);
-                }
-                else {
-                    undef(@queue);
-                    IRC::chanmsg("Outgoing message queue cleared by $arg[0].");
-                }
-            }
             elsif ($arg[3] eq "stats") {
                 my $statstown;
                 my $statswork;
                 my $statsforest;
-                my $Barbarian;
-                my $Wizard;
-                my $Paladin;
-                my $Rogue;
+                my $barbarian;
+                my $wizard;
+                my $paladin;
+                my $rogue;
                     $statstown = scalar(grep { $Simulation::rps{$_}{status} == TOWN && $Simulation::rps{$_}{online} } keys %Simulation::rps);
                     $statswork = scalar(grep { $Simulation::rps{$_}{status} == WORK && $Simulation::rps{$_}{online} } keys %Simulation::rps);
                     $statsforest = scalar(grep { $Simulation::rps{$_}{status} == FOREST && $Simulation::rps{$_}{online} } keys %Simulation::rps);
-                    $Barbarian = scalar(grep { $Simulation::rps{$_}{ability} eq BARBARIAN && $Simulation::rps{$_}{online} } keys %Simulation::rps);
-                    $Wizard = scalar(grep { $Simulation::rps{$_}{ability} eq WIZARD && $Simulation::rps{$_}{online} } keys %Simulation::rps);
-                    $Paladin = scalar(grep { $Simulation::rps{$_}{ability} eq PALADIN && $Simulation::rps{$_}{online} } keys %Simulation::rps);
-                    $Rogue = scalar(grep { $Simulation::rps{$_}{ability} eq ROGUE && $Simulation::rps{$_}{online} } keys %Simulation::rps);
+                    $barbarian = scalar(grep { $Simulation::rps{$_}{ability} eq BARBARIAN && $Simulation::rps{$_}{online} } keys %Simulation::rps);
+                    $wizard = scalar(grep { $Simulation::rps{$_}{ability} eq WIZARD && $Simulation::rps{$_}{online} } keys %Simulation::rps);
+                    $paladin = scalar(grep { $Simulation::rps{$_}{ability} eq PALADIN && $Simulation::rps{$_}{online} } keys %Simulation::rps);
+                    $rogue = scalar(grep { $Simulation::rps{$_}{ability} eq ROGUE && $Simulation::rps{$_}{online} } keys %Simulation::rps);
                 IRC::privmsg("Online players : there are $statstown players in town, $statswork at work and ".
                     "$statsforest in the forest. We have $Barbarian Barbarians, $Wizard Wizards, $Paladin Paladins ".
                     "and $Rogue Rogues.", $usernick);
             }
-            elsif ($arg[3] eq "info") {
+            elsif ($arg[3] eq "info" || $arg[3] eq "stats") {
                 my $info;
-                if (!ha($username) && $Options::opts{allowuserinfo}) {
+                my $statstown;
+                my $statswork;
+                my $statsforest;
+                my $barbarian;
+                my $wizard;
+                my $paladin;
+                my $rogue;
 
-                    $info = "IdleRPG for Slack $main::version by dhyrule, based on IdleRPG by raz.".  
+                    $info = "IdleRPG-Slack $main::version. ".  
 
-                    "On via server: ".$Options::opts{servers}->[0].". Admins online: ".
+                    "Admins online: ".
                     join(", ", map { $Simulation::rps{$_}{nick} }
-                        grep { $Simulation::rps{$_}{admin} && $Simulation::rps{$_}{online} } keys(%Simulation::rps)).".";
-                    IRC::privmsg($info, $usernick);
-                }
-                elsif (!ha($username) && !$Options::opts{allowuserinfo}) {
-                    IRC::privmsg("You do not have access to INFO.", $usernick);
-                }
-                else {
-                    my $queuedbytes = 0;
-                    $queuedbytes += (length($_)+2) for @queue; # +2 = \r\n
-                    $info = sprintf(
-                        "%.2fkb sent, %.2fkb received in %s. %d IRPG users ".
-                        "online of %d total users. %d accounts created since ".
-                        "startup. PAUSE_MODE is %d, SILENT_MODE is %d. ".
-                        "Outgoing queue is %d bytes in %d items. On via: %s. ".
-                        "Admins online: %s.",
-                        $outbytes/1024,
-                        $inbytes/1024,
-                        Simulation::duration(time()-$^T),
-                        scalar(grep { $Simulation::rps{$_}{online} } keys(%Simulation::rps)),
-                        scalar(keys(%Simulation::rps)),
-                        $registrations,
-                        $Simulation::pausemode,
-                        $queuedbytes,
-                        scalar(@queue),
-                        $Options::opts{servers}->[0],
-                        join(", ",map { $Simulation::rps{$_}{nick} }
-                          grep { $Simulation::rps{$_}{admin} && $Simulation::rps{$_}{online} }
-                          keys(%Simulation::rps)));
+                        grep { $Simulation::rps{$_}{admin} && $Simulation::rps{$_}{online} } keys(%Simulation::rps));
+                    $statstown = scalar(grep { $Simulation::rps{$_}{status} == TOWN && $Simulation::rps{$_}{online} } keys %Simulation::rps);
+                    $statswork = scalar(grep { $Simulation::rps{$_}{status} == WORK && $Simulation::rps{$_}{online} } keys %Simulation::rps);
+                    $statsforest = scalar(grep { $Simulation::rps{$_}{status} == FOREST && $Simulation::rps{$_}{online} } keys %Simulation::rps);
+                    $barbarian = scalar(grep { $Simulation::rps{$_}{ability} eq BARBARIAN && $Simulation::rps{$_}{online} } keys %Simulation::rps);
+                    $wizard = scalar(grep { $Simulation::rps{$_}{ability} eq WIZARD && $Simulation::rps{$_}{online} } keys %Simulation::rps);
+                    $paladin = scalar(grep { $Simulation::rps{$_}{ability} eq PALADIN && $Simulation::rps{$_}{online} } keys %Simulation::rps);
+                    $rogue = scalar(grep { $Simulation::rps{$_}{ability} eq ROGUE && $Simulation::rps{$_}{online} } keys %Simulation::rps);
                     IRC::privmsg($info, $usernick, 1);
-                }
+                IRC::privmsg("There are $statstown players in town, $statswork at work and ".
+                    "$statsforest in the forest. We have $barbarian Barbarians, $wizard Wizards, $paladin Paladins ".
+                    "and $rogue Rogues.", $usernick);
+
             }
             elsif ($arg[3] eq "login") {
                 if (!defined($username)) {
                     if ($#arg < 5 || $arg[5] eq "") {
-                        IRC::notice("Try: LOGIN <username> <password>", $usernick);
+                        IRC::privmsg("Try: LOGIN <username> <password>", $usernick);
                     }
                     elsif (!exists $Simulation::rps{$arg[4]}) {
-                        IRC::notice("Sorry, no such account name. Account names are case sensitive.",$usernick);
+                        IRC::privmsg("Sorry, no such account name. Account names are case sensitive.",$usernick);
                     }
                     elsif (!exists $onchan{$usernick}) {
-                        IRC::notice("Sorry, you're not in $Options::opts{botchan}.",$usernick);
+                        IRC::privmsg("Sorry, you're not in $Options::opts{botchan}.",$usernick);
                     }
                     elsif ($Simulation::rps{$arg[4]}{pass} ne crypt($arg[5],$Simulation::rps{$arg[4]}{pass})) {
-                        IRC::notice("Wrong password.", $usernick);
+                        IRC::privmsg("Wrong password.", $usernick);
                     }
                     else {
                         $Simulation::rps{$arg[4]}{online} = 1;

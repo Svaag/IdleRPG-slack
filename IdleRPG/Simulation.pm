@@ -20,7 +20,6 @@ my $IsEnding = 0;
 my $selfrestarttime = time() + 43000;
 
 sub rpcheck {
-    IRC::fq();
     $lastreg = 0;
     my $online = scalar(grep { $Simulation::rps{$_}{online} } keys(%Simulation::rps));
     return unless $online;
