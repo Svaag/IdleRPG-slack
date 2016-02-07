@@ -24,6 +24,10 @@ sub loadjsondb {
     return;
 }
 
+sub regular_backup {
+    writejsondb(\%Simulation::rps);
+}
+
 sub writejsondb {
     my $stats = shift;
     my %rps = %$stats;
