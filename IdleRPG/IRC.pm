@@ -1031,25 +1031,6 @@ sub parse {
                     exec("perl $0");
                 }
             }
-            elsif ($arg[3] eq "stats") {
-                my $statstown;
-                my $statswork;
-                my $statsforest;
-                my $barbarian;
-                my $wizard;
-                my $paladin;
-                my $rogue;
-                    $statstown = scalar(grep { $Simulation::rps{$_}{status} == TOWN && $Simulation::rps{$_}{online} } keys %Simulation::rps);
-                    $statswork = scalar(grep { $Simulation::rps{$_}{status} == WORK && $Simulation::rps{$_}{online} } keys %Simulation::rps);
-                    $statsforest = scalar(grep { $Simulation::rps{$_}{status} == FOREST && $Simulation::rps{$_}{online} } keys %Simulation::rps);
-                    $barbarian = scalar(grep { $Simulation::rps{$_}{ability} eq BARBARIAN && $Simulation::rps{$_}{online} } keys %Simulation::rps);
-                    $wizard = scalar(grep { $Simulation::rps{$_}{ability} eq WIZARD && $Simulation::rps{$_}{online} } keys %Simulation::rps);
-                    $paladin = scalar(grep { $Simulation::rps{$_}{ability} eq PALADIN && $Simulation::rps{$_}{online} } keys %Simulation::rps);
-                    $rogue = scalar(grep { $Simulation::rps{$_}{ability} eq ROGUE && $Simulation::rps{$_}{online} } keys %Simulation::rps);
-                IRC::privmsg("Online players : there are $statstown players in town, $statswork at work and ".
-                    "$statsforest in the forest. We have $Barbarian Barbarians, $Wizard Wizards, $Paladin Paladins ".
-                    "and $Rogue Rogues.", $usernick);
-            }
             elsif ($arg[3] eq "info" || $arg[3] eq "stats") {
                 my $info;
                 my $statstown;
