@@ -204,7 +204,7 @@ sub calamity {
         my($i,$actioned);
         while (my $line = <Q>) {
             chomp($line);
-            if ($line =~ / (.*)/ && rand(++$i) < 1) { $actioned = $1; }
+            if ($line =~ /^C (.*)/ && rand(++$i) < 1) { $actioned = $1; }
         }
         close(Q) or do {
             return IRC::chanmsg("ERROR: Failed to close $Options::opts{eventsfile}: $!");
