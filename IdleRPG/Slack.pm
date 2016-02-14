@@ -3,24 +3,31 @@ package IdleRPG::Slack;
 use AnyEvent;
 use AnyEvent::SlackRTM;
 use WebService::Slack::WebApi;
+use Sub::Throttler qw( throttle_it );
+use Sub::Throttler::Rate::AnyEvent;
 use Encode;
 use JSON;
 use strict;
 use warnings;
 
-# Connect to slack, setup event listeners and start the game 
-sub start {
-    my $keep_alive;
-    my $tick;
-    my $backup;
-    our %slack_info;
-    my $cond = AnyEvent->condvar;
+# Slack API info
+my $access_token = $Options::opts{token};
+our $slack_api = WebService::Slack::WebApi->new(token => $access_token);
+our $slack_rtm = AnyEvent::SlackRTM->new($access_token);
 
-    # Slack API info
-    my $access_token = $Options::opts{token};
-    our $slack_api = WebService::Slack::WebApi->new(token => $access_token);
-    our $slack_rtm = AnyEvent::SlackRTM->new($access_token);
- 
+our $throttle = Sub::Throttler::Rate::AnyEvent->new(period => 15, limit => 15);
+throttle_it('AnyEvent::SlackRTM::send');
+
+$throttle->apply_to_methods("AnyEvent::SlackRTM" => qw( send ));
+
+# Setup event listeners, connect to Slack and start the game loop
+sub start {
+my $keep_alive;
+my $tick;
+my $backup;
+our %slack_info;
+my $cond = AnyEvent->condvar;
+
     # Slack API sends hello when connection is confirmed 
     # It means we are ready to go!
     $slack_rtm->on('hello' => sub { 
@@ -28,6 +35,8 @@ sub start {
 
         # Get information about bot connection
         %slack_info = get_slack_info();
+        use Data::Dumper;
+        print Dumper(%slack_info);
 
         # We need to send pings in order to keep the connection
         $keep_alive = AnyEvent->timer(interval => 30, cb => sub {
@@ -61,6 +70,7 @@ sub start {
         Bot::debug("< $message->{text}, $message->{user}\n");
  
         # Get username and direct message channel ID from Slack UserID
+        # TODO: This spams the API so should be read from metadata instead.
         my $username = get_username_from_id($message->{user});
         my $channel_id = $message->{channel};
 
@@ -78,7 +88,7 @@ sub start {
         Bot::debug("Slack ERROR: $error->{error}{msg}\n");
     });
 
-    # Handle Slack connection being closed with something fancy
+    #TODO: Handle Slack connection being closed with something fancy
     $slack_rtm->on('finish' => sub { 
         Bot::debug("Done\n");
         $cond->send;
@@ -151,7 +161,7 @@ sub get_username_from_id {
                                user => $id,
                                );
 
-    return $info->{user}->{name};
+    my $username = $info->{user}->{name};
 
 }
 
@@ -179,6 +189,7 @@ sub send_direct_message {
     my($text,$user) = @_;
 
     # First get User ID from Username and then the user's IM channel ID from the User ID
+    # TODO: This spams the API so should be read from metadata instead
     my $user_id = get_id_from_username($user);
     my $im_channel_id = get_im_channel_id_from_user_id($user_id);
         Bot::debug("$user_id $im_channel_id");
