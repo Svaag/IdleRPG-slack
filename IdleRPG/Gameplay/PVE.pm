@@ -68,9 +68,16 @@ sub dragon_fight {
     $ThisMySum = int( ($ThisMySum + ($Simulation::rps{$ThisMe}{upgrade}*100))*($Simulation::rps{$ThisMe}{life}/100) );
     $ThisMyRoll = int( ($ThisMyRoll + ($Simulation::rps{$ThisMe}{upgrade}*100))*($Simulation::rps{$ThisMe}{life}/100) );
     if ($UsedMana == 1) {
-        $ThisMySum = int( (($ThisMySum*2) + ($Simulation::rps{$ThisMe}{upgrade}*100))*($Simulation::rps{$ThisMe}{life}/100) );
-        $ThisMyRoll = int( (($ThisMyRoll*2) + ($Simulation::rps{$ThisMe}{upgrade}*100))*($Simulation::rps{$ThisMe}{life}/100) );
-    }
+        if($ThisMyClass eq BARBARIAN) { #RipKim2016
+            $ThisMyRoll = int($ThisMySum/1.3); #räknar bort 30% increase
+            $tempvar = int($ThisMySum*0.3); #Tar ut 30% av kims max increase för att sedan plussa på det efter gånger 2
+            $ThisMySum = int( ((($ThisMySum*2) + $tempvar) + ($Simulation::rps{$ThisMe}{upgrade}*100))*($Simulation::rps{$ThisMe}{life}/100) );
+            $ThisMyRoll = int( ((($ThisMyRoll*2) + $tempvar) + ($Simulation::rps{$ThisMe}{upgrade}*100))*($Simulation::rps{$ThisMe}{life}/100) );
+        }
+        else    {   
+            $ThisMySum = int( (($ThisMySum*2) + ($Simulation::rps{$ThisMe}{upgrade}*100))*($Simulation::rps{$ThisMe}{life}/100) );
+            $ThisMyRoll = int( (($ThisMyRoll*2) + ($Simulation::rps{$ThisMe}{upgrade}*100))*($Simulation::rps{$ThisMe}{life}/100) );}
+        }
     if ($ThisMyClass eq ROGUE) { #Rogue class bonus
         $ThisMyRoll = int(rand($ThisMyRoll - ($ThisMyRoll*.25)) + ($ThisMyRoll*.25));
     }
