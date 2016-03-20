@@ -832,8 +832,8 @@ sub parse {
                         "Next level in ".Simulation::duration($Simulation::rps{$username}{next})."\n";
                     my $tempsum = Equipment::itemsum($username,0);
                     my $now = time();
-                    if (!exists($Simulation::rps{$username}{power_cooldown}) {
-                        $Simulation::rps{$username}{power_cooldown} = 0;
+                    if (!exists($Simulation::rps{$username}{power_cooldown})) {
+                        $Simulation::rps{$username}{power_cooldown} = $now;
                     }
                         $whoami .= "Items: ring[".($Simulation::rps{$username}{item}{ring})."], ".
                         "amulet[".($Simulation::rps{$username}{item}{amulet})."], ".
