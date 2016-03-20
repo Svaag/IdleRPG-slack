@@ -819,11 +819,11 @@ sub parse {
                     IRC::privmsg("You are not logged in.", $usernick);
                 }
                 else {
-                    IRC::privmsg("You are $username, the level ".
+                        $whoami .= "You are $username, the level ".
                         $Simulation::rps{$username}{level}." $Simulation::rps{$username}{class}. ".
-                        "Next level in ".Simulation::duration($Simulation::rps{$username}{next}),$usernick);
+                        "Next level in ".Simulation::duration($Simulation::rpS{$username}{next})."\n";
                     my $tempsum = Equipment::itemsum($username,0);
-                    IRC::privmsg("Items: ring[".($Simulation::rps{$username}{item}{ring})."], ".
+                        $whoami .= "Items: ring[".($Simulation::rps{$username}{item}{ring})."], ".
                         "amulet[".($Simulation::rps{$username}{item}{amulet})."], ".
                         "charm[".($Simulation::rps{$username}{item}{charm})."], ".
                         "weapon[".($Simulation::rps{$username}{item}{weapon})."], ".
@@ -840,9 +840,9 @@ sub parse {
                         "Ability: $Simulation::rps{$username}{ability}. ".
                         "XP: $Simulation::rps{$username}{experience}. ".
                         "Life: $Simulation::rps{$username}{life}. ".
-                        "Alignment: $Simulation::rps{$username}{alignment}. ", $usernick);
-#                        "Potions: power: $Simulation::rps{$username}{powerpotion}. "
-                    IRC::privmsg("Lotto 1: $Simulation::rps{$username}{lotto11}, $Simulation::rps{$username}{lotto12} and $Simulation::rps{$username}{lotto13}. ".
+                        "Alignment: $Simulation::rps{$username}{alignment}. ".
+                        "Potions: power: $Simulation::rps{$username}{powerpotion}, mana: $Simulation::rps{$username}{mana} \n";
+                        $whoami .= "Lotto 1: $Simulation::rps{$username}{lotto11}, $Simulation::rps{$username}{lotto12} and $Simulation::rps{$username}{lotto13}. ".
                         "Lotto 2: $Simulation::rps{$username}{lotto21}, $Simulation::rps{$username}{lotto22} and $Simulation::rps{$username}{lotto23}. ".
                         "Lotto 3: $Simulation::rps{$username}{lotto31}, $Simulation::rps{$username}{lotto32} and $Simulation::rps{$username}{lotto33}. ".
                         "| Stone 1: $Simulation::rps{$username}{Special01}. ".
@@ -850,7 +850,7 @@ sub parse {
                         "Stone 3: $Simulation::rps{$username}{Special03}. ".
                         "| Expert 1: $Simulation::rps{$username}{ExpertItem01}. ".
                         "Expert 2: $Simulation::rps{$username}{ExpertItem02}. ".
-                        "Expert 3: $Simulation::rps{$username}{ExpertItem03}.", $usernick);
+                        "Expert 3: $Simulation::rps{$username}{ExpertItem03}.\n";
                     my $NextCreep = $Simulation::rps{$username}{regentm} - time();
                     if ($NextCreep > 0) {
                         $NextCreep = Simulation::duration($NextCreep);
@@ -879,8 +879,13 @@ sub parse {
                     else {
                         $BattleRec = "0 days, 0:00:00";
                     }
-                    IRC::privmsg("Next Creep Attack: $NextCreep. Next Dragon Slay: $NextDragon. ".
-                        "Tournament Recover: $TournyRec. Battle Recover: $BattleRec.", $usernick);
+                    $whoami .= "Next Creep Attack: $NextCreep. Next Dragon Slay: $NextDragon. ".
+                        "Tournament Recover: $TournyRec. Battle Recover: $BattleRec.\n";
+                    if ($Simulation::rps{$username}{status} == WORK) {
+                        my $worktime = time() - $Simulation::rps{$username}{Worktime};
+                        $whoami .= "Time at work: ".Simulation::duration($worktime);
+                    }
+                    IRC::privmsg($whoami, $usernick);
                 }
             }
             elsif ($arg[3] eq "newpass") {
