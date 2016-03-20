@@ -171,6 +171,7 @@ sub rpcheck {
     }
         $curtime=time();
         for my $k (keys(%Simulation::rps)) {
+	    if (exists $Simulation::rps{$k}{nick} && $Simulation::rps{$k}{nick}) {
                 $Simulation::rps{$k}{next} -= ($curtime - $IdleRPG::Slack::lasttime);
                 $Simulation::rps{$k}{idled} += ($curtime - $IdleRPG::Slack::lasttime);
                 if ($Simulation::rps{$k}{next} < 1) {
@@ -186,6 +187,7 @@ sub rpcheck {
                     $Simulation::rps{$k}{ffight} = 0;
                     $Simulation::rps{$k}{scrolls} = 0;
                 }
+	    } 
         }
         if (!$pausemode && ($rpreport%60 < $oldrpreport%60)) { Database::writejsondb(\%Simulation::rps); }
         $oldrpreport = $rpreport;
