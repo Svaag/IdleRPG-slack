@@ -157,6 +157,12 @@ sub rpcheck {
             Events::AutoHeal();
         }
     }
+    if (($rpreport%7200 < $oldrpreport%7200)) { # every 2 hours
+        Events::agonize_player();
+    }
+    if (($rpreport%28800 < $oldrpreport%28800)) { # every 8 hours
+        Events::unwatch_player();
+    }
     if (($rpreport%21600 < $oldrpreport%21600)) { # every 6 hours
         Events::forestwalk();
     }
