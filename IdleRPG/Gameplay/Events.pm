@@ -611,7 +611,7 @@ sub unwatch_player {
 
     my @players = grep { $Simulation::rps{$_}{watched} == 1  } keys(%Simulation::rps);
     return unless @players;
-    $username = $players[0];
+    $username = $players[rand @players];
     $Simulation::rps{$username}{watched} = 0;
 
     my $chan_msg = "The watcher has lost interest in $username and is no longer pursuing them.";
@@ -627,7 +627,7 @@ sub agonize_player {
     my $insane = 5 + int(rand(8));
     my @players = grep { $Simulation::rps{$_}{watched} == 1  } keys(%Simulation::rps);
     return unless @players;
-    $username = $players[0];
+    $username = $players[rand @players];
 
     IRC::chanmsg("$username is feeling increasingly paranoid and loses $insane\% life to insanity.");
     $Simulation::rps{$username}{life} -= $insane;
