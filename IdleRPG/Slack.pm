@@ -38,7 +38,7 @@ my $cond = AnyEvent->condvar;
         %slack_info = get_slack_info();
 
         # We need to send pings in order to keep the connection
-        $keep_alive = AnyEvent->timer(interval => 30, cb => sub {
+        $keep_alive = AnyEvent->timer(interval => 5, cb => sub {
             $slack_rtm->ping;
             Bot::debug("Ping\n");
         });
