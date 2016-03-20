@@ -821,7 +821,7 @@ sub parse {
                 else {
                         $whoami .= "You are $username, the level ".
                         $Simulation::rps{$username}{level}." $Simulation::rps{$username}{class}. ".
-                        "Next level in ".Simulation::duration($Simulation::rpS{$username}{next})."\n";
+                        "Next level in ".Simulation::duration($Simulation::rps{$username}{next})."\n";
                     my $tempsum = Equipment::itemsum($username,0);
                         $whoami .= "Items: ring[".($Simulation::rps{$username}{item}{ring})."], ".
                         "amulet[".($Simulation::rps{$username}{item}{amulet})."], ".
