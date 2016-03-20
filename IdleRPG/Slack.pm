@@ -82,6 +82,19 @@ my $cond = AnyEvent->condvar;
         }
     });
 
+    # Handle User Typing events
+    $slack_rtm->on('user_typing' => sub {
+        my ($slack_rtm, $typing) = @_;
+        my $username = get_username_from_id($typing->{user});
+        my $channel_id = $typing->{channel};
+
+        # Put any player typing in game channel under watch
+        if ($channel_id eq $IdleRPG::Slack::slack_info{game_chan_id}) {
+            Events::watch_player($username);
+        }
+
+    });
+
     # Handle Error responses from RTM api
     $slack_rtm->on('error' => sub { 
         my ($slack_rtm, $error) = @_;
@@ -164,6 +177,20 @@ sub get_username_from_id {
 
     my $username = $info->{user}->{name};
 
+    return $username;
+
+}
+
+# Get Player Name from Slack UserID
+sub get_player_name_from_id {
+    my $id = shift;
+
+    # Get information from player hash 
+    my $username = get_username_from_id($id);
+    my $player_name = IRC::finduser($username);
+
+    return $player_name;
+
 }
 
 # Get direct message Slack Channel ID
@@ -193,8 +220,6 @@ sub send_direct_message {
     # TODO: This spams the API so should be read from metadata instead
     my $user_id = get_id_from_username($user);
     my $im_channel_id = get_im_channel_id_from_user_id($user_id);
-        Bot::debug("$user_id $im_channel_id");
-        Bot::debug("> $text, $user\r\n");
 
         # Send direct message
         $IdleRPG::Slack::slack_rtm->send({

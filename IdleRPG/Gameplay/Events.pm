@@ -595,4 +595,78 @@ sub lottery {
     }
 }
 
+sub watch_player {
+    my $username = shift;
+    my $player = IRC::finduser($username);
+    if ($Simulation::rps{$player}{watched} == 0) {
+        my $chan_msg = "$player has unwisely made their presence known and is now being watched.";
+        my $priv_msg = "*distant whispering* I am watching you, $player...";
+        IRC::chanmsg($chan_msg);
+        IRC::privmsg($priv_msg,$username);
+        $Simulation::rps{$player}{watched} = 1;
+    }
+}
+
+sub unwatch_player {
+
+    my @players = grep { $Simulation::rps{$_}{watched} == 1  } keys(%Simulation::rps);
+    return unless @players;
+    $username = $players[0];
+    $Simulation::rps{$username}{watched} = 0;
+
+    my $chan_msg = "The watcher has lost interest in $username and is no longer pursuing them.";
+    my $priv_msg = "You are pathethic.";
+    IRC::chanmsg($chan_msg);
+    IRC::privmsg($priv_msg,$username);
+
+}
+
+
+sub agonize_player {
+
+    my $insane = 5 + int(rand(8));
+    my @players = grep { $Simulation::rps{$_}{watched} == 1  } keys(%Simulation::rps);
+    return unless @players;
+    $username = $players[0];
+
+    IRC::chanmsg("$username is feeling increasingly paranoid and loses $insane\% life to insanity.");
+    $Simulation::rps{$username}{life} -= $insane;
+    IRC::chanmsg("$username has ".$Simulation::rps{$username}{life}."\% life remaining.");
+
+    my @whispers = (
+        'You are going to die.',
+        'There is not much time left.',
+        'Your friends will abandon you.',
+        'It is time to give up.',
+        'Nothing will escape His wrath.',
+        'You are already dead.',
+        'There is no point in trying.',
+        'Everything will be the same without you.',
+        'Enter the void.',
+        'He will come.',
+        'He will find you.',
+        'I will find you.',
+        'He is everywhere.',
+        'We are waiting for Him.',
+        'You are being followed.',
+        'A great presence will arrive.',
+        'There is only Him.',
+        'Join us.',
+        'The waters will rise and take you under.',
+        'There is no hope.',
+        'Everything is lost.',
+        'I see you.',
+        'I hear you.',
+        'Run.',
+        'Hide.',
+        'You will not escape.',
+    );
+    my $random_whisper = $whispers[int(rand(@whispers))];
+    my $priv_msg = "*whispering* $random_whisper";
+    my $slack_name = $Simulation::rps{$username}{nick};
+
+    IRC::privmsg($priv_msg,$slack_name);
+
+}
+
 1;
