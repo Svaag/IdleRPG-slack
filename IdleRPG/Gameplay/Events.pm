@@ -4,7 +4,7 @@ package Events;
 #use IdleRPG::Simulation;
 
 sub moveplayers {
-    return unless $IRC::lasttime > 1;
+    return unless $IdleRPG::Slack::lasttime > 1;
     my $onlinecount = grep { $Simulation::rps{$_}{online} } keys %Simulation::rps;
     return unless $onlinecount;
     for (my $i=0;$i<$Options::opts{self_clock};++$i) {

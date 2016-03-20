@@ -26,6 +26,7 @@ my $keep_alive;
 my $tick;
 my $backup;
 our %slack_info;
+our $lasttime;
 my $cond = AnyEvent->condvar;
 
     # Slack API sends hello when connection is confirmed 
@@ -35,8 +36,6 @@ my $cond = AnyEvent->condvar;
 
         # Get information about bot connection
         %slack_info = get_slack_info();
-        use Data::Dumper;
-        print Dumper(%slack_info);
 
         # We need to send pings in order to keep the connection
         $keep_alive = AnyEvent->timer(interval => 30, cb => sub {
@@ -55,6 +54,7 @@ my $cond = AnyEvent->condvar;
             Bot::debug("Database Backup\n");
             Database::regular_backup();
         });
+
 
     });
 
@@ -97,6 +97,7 @@ my $cond = AnyEvent->condvar;
     Bot::debug("Game setup. Starting!");
 
     # Start up the game loop and event listener!
+    $lasttime = time();
     $slack_rtm->start;
     AnyEvent->condvar->recv;
 

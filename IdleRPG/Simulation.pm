@@ -18,6 +18,7 @@ our $pausemode = 0;
 my $IsEnding = 0;
 
 my $selfrestarttime = time() + 43000;
+my $curtime;
 
 sub rpcheck {
     $lastreg = 0;
@@ -168,12 +169,10 @@ sub rpcheck {
     if (($rpreport%600 < $oldrpreport%600) && $pausemode) { # warn every 10m
         IRC::chanmsg("WARNING: Cannot write database in PAUSE mode!");
     }
-    if ($IRC::lasttime != 1) {
-        my $curtime=time();
+        $curtime=time();
         for my $k (keys(%Simulation::rps)) {
-            if ($Simulation::rps{$k}{online} && exists $Simulation::rps{$k}{nick} && $Simulation::rps{$k}{nick} && exists $IRC::onchan{$Simulation::rps{$k}{nick}}) {
-                $Simulation::rps{$k}{next} -= ($curtime - $IRC::lasttime);
-                $Simulation::rps{$k}{idled} += ($curtime - $IRC::lasttime);
+                $Simulation::rps{$k}{next} -= ($curtime - $IdleRPG::Slack::lasttime);
+                $Simulation::rps{$k}{idled} += ($curtime - $IdleRPG::Slack::lasttime);
                 if ($Simulation::rps{$k}{next} < 1) {
                     my $ttl = int(Level::ttl($Simulation::rps{$k}{level}));
                     $Simulation::rps{$k}{level}++;
@@ -187,13 +186,11 @@ sub rpcheck {
                     $Simulation::rps{$k}{ffight} = 0;
                     $Simulation::rps{$k}{scrolls} = 0;
                 }
-            }
         }
         if (!$pausemode && ($rpreport%60 < $oldrpreport%60)) { Database::writejsondb(\%Simulation::rps); }
         $oldrpreport = $rpreport;
-        $rpreport += $curtime - $IRC::lasttime;
-        $IRC::lasttime = $curtime;
-    }
+        $rpreport += $curtime - $IdleRPG::Slack::lasttime;
+        $IdleRPG::Slack::lasttime = $curtime;
 }
 
 

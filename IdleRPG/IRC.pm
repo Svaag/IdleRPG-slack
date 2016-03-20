@@ -28,7 +28,6 @@ our $primnick = $Options::opts{botnick};
 my $lastreg = 0;
 my $registrations = 0;
 my %prev_online;
-our $lasttime = 1;
 our %onchan;
 
 sub chanmsg {
