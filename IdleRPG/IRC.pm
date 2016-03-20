@@ -886,6 +886,7 @@ sub parse {
                         $whoami .= "Time at work: ".Simulation::duration($worktime);
                     }
                     IRC::privmsg($whoami, $usernick);
+		    undef $whoami;
                 }
             }
             elsif ($arg[3] eq "newpass") {

@@ -1,0 +1,45 @@
+[03/20/16 03:52:30] Archibald [73/1299] has challenged Leviathan [13496/19724] in combat and lost! 0 days, 00:09:37 is added to Archibald's clock. Archibald gets 2 XP and Leviathan gets 4 XP. Archibald has 19% of their Life remaining.
+[03/20/16 04:08:38] Svag [16120/16681] has attacked a Skeleton [2952/7000] and killed it! 2 days, 06:25:52 is removed from Svag's clock. Svag gets 4 XP.
+[03/20/16 04:22:46] Svag [16599/34648] tried to slay a Red_Dragon [2095/25000] and won! 1 day, 01:40:49 is removed from Svag's clock. Svag gets 5 XP. Each item gains 4 points.
+[03/20/16 04:34:30] Izam stole 943 gold from Svag!
+[03/20/16 04:39:56] Bobson invented the wheel. This moves them 1 day, 23:47:25 closer towards level 60.
+[03/20/16 05:12:15] Archibald [1186/1299] has challenged Sathiras [3485/4639] in combat and lost! 1 day, 11:17:31 is added to Archibald's clock. Archibald gets 2 XP and Sathiras gets 1 XP. Archibald has 16% of their Life remaining.
+[03/20/16 05:44:03] babascus [1492/5611] has challenged MoonMoon [11518/17303] in combat and lost! 0 days, 09:42:13 is added to babascus's clock. babascus gets 1 XP and MoonMoon gets 4 XP. babascus has 82% of their Life remaining.
+[03/20/16 05:44:31] Leviathan, Bobson, and Izam [36801/41696] have hunted down a bunch of Monster [33176/66397] and defeated them! 0 days, 00:07:33 is removed from their clocks. They all get 5 XP.
+[03/20/16 05:47:33] babascus found a flying . This moves them 0 days, 14:24:12 closer towards level 57.
+[03/20/16 05:48:05] The local wizard imbued Izam's gloves with dragon claw powder! Izam's gloves gains 10% effectiveness.
+[03/20/16 06:14:45] Izam [769/2020] has challenged MoonMoon [17041/17303] in combat and lost! 1 day, 10:46:14 is added to Izam's clock. Izam gets 1 XP and MoonMoon gets 3 XP. Izam has 31% of their Life remaining.
+[03/20/16 06:44:03] MoonMoon [13154/17303] has challenged Sathiras [1244/4639] in combat and won! 0 days, 06:13:28 is removed from MoonMoon's clock. MoonMoon gets 4 XP and Sathiras gets 1 XP. Sathiras has 66% of their Life remaining.
+[03/20/16 07:37:25] Obi-Juan gained a sixth sense. This moves them 1 day, 11:23:30 closer towards level 60.
+[03/20/16 07:43:01] babascus was caught stealing, however, they still get 5 XP for trying.
+[03/20/16 07:44:03] Krakel [9489/19409] has challenged Qoob [16552/24857] in combat and lost! 0 days, 05:05:58 is added to Krakel's clock. Krakel gets 2 XP and Qoob gets 1 XP. Krakel has 97% of their Life remaining.
+[03/20/16 07:45:59] babascus [1944/5350] has been set upon by some Shadows [3871/5258] and lost! 0 days, 10:18:38 is added to babascus's clock.
+[03/20/16 07:48:01] MoonMoon ate a very disagreeable fruit, getting a terrible case of heartburn. This terrible calamity has slowed them 0 days, 04:03:32 from level 60.
+[03/20/16 08:44:03] Connish [5776/7431] has challenged babascus [4874/5350] in combat and won! 0 days, 03:49:38 is removed from Connish's clock. Connish gets 4 XP and babascus gets 2 XP. babascus has 80% of their Life remaining.
+[03/20/16 09:15:14] Sathiras [12629/14248] tried to slay a Green_Dragon [11042/15000] and won! 0 days, 06:19:03 is removed from Sathiras's clock. Sathiras gets 4 XP. Each item gains 3 points.
+[03/20/16 09:15:20] Sathiras [6352/7012] has attacked a Goblin [3243/4000] and killed it! 0 days, 12:19:08 is removed from Sathiras's clock. Sathiras gets 5 XP.
+[03/20/16 09:27:58] Sathiras [3911/7012] has challenged babascus [3769/5220] and won! 1 day, 08:44:22 is removed from Sathiras's clock. Sathiras gets 3 XP, babascus gets 1 XP. babascus has 79% of their Life remaining.
+[03/20/16 09:27:58] Sathiras [4124/7012] has challenged babascus [978/5129] and won! 1 day, 04:09:21 is removed from Sathiras's clock. Sathiras gets 5 XP, babascus gets 2 XP. babascus has 78% of their Life remaining.
+[03/20/16 09:27:58] Sathiras [6692/6991] has challenged babascus [74/5057] and won! 1 day, 00:12:50 is removed from Sathiras's clock. Sathiras gets 5 XP, babascus gets 1 XP. babascus has 76% of their Life remaining.
+[03/20/16 09:27:59] Sathiras [2420/6991] has challenged babascus [6229/4927] and lost! 0 days, 11:53:58 is added to Sathiras's clock. Sathiras gets 1 XP, babascus gets 4 XP. Sathiras has 99% of their Life remaining.
+[03/20/16 09:28:00] Sathiras [3517/6991] has challenged babascus [3581/4927] and lost! 0 days, 12:51:05 is added to Sathiras's clock. Sathiras gets 1 XP, babascus gets 4 XP. Sathiras has 98% of their Life remaining.
+[03/20/16 09:44:03] Obi-Juan [2903/16504] has challenged Bruno [41/1634] in combat and won! 3 days, 15:08:36 is removed from Obi-Juan's clock. Obi-Juan gets 3 XP and Bruno gets 2 XP. Bruno has 50% of their Life remaining.
+[03/20/16 09:44:03] Obi-Juan has dealt Bruno a Critical Strike! 0 days, 08:05:49 is added to Bruno's clock.
+[03/20/16 10:34:47] Bruno has won the Work Battle!
+[03/20/16 10:34:47] Bruno received 2 days of wages (1440 gold) and 0 days, 15:38:32 is removed from TTL!
+[03/20/16 10:44:03] Obi-Juan [14200/16504] has challenged Leviathan [9926/19724] in combat and won! 3 days, 15:19:43 is removed from Obi-Juan's clock. Obi-Juan gets 4 XP and Leviathan gets 1 XP. Leviathan has 98% of their Life remaining.
+[03/20/16 11:07:42] Bobson [12670/17351] has attacked a Lich [1115/6000] and killed it! 0 days, 17:11:40 is removed from Bobson's clock. Bobson gets 3 XP.
+[03/20/16 11:07:49] Bobson [15028/34788] tried to slay a Green_Dragon [2028/15000] and won! 0 days, 08:10:02 is removed from Bobson's clock. Bobson gets 7 XP. Each item gains 3 points.
+[03/20/16 11:11:03] Obi-Juan [11592/16504] has attacked a Skeleton [689/7000] and killed it! 1 day, 00:43:14 is removed from Obi-Juan's clock. Obi-Juan gets 5 XP.
+[03/20/16 11:23:19] Sathiras, MoonMoon, and Archibald [10725/29946] have hunted down a bunch of Monster [22512/46880] but they beat them badly! 0 days, 08:12:44 is added to their clocks. They all get 2 XP.
+[03/20/16 11:44:03] Krakel [8492/19017] has challenged Sathiras [6601/6991] in combat and won! 0 days, 08:25:47 is removed from Krakel's clock. Krakel gets 4 XP and Sathiras gets 2 XP. Sathiras has 97% of their Life remaining.
+[03/20/16 11:44:03] Krakel has dealt Sathiras a Critical Strike! 1 day, 10:05:36 is added to Sathiras's clock.
+[03/20/16 11:49:41] Krakel was caught stealing, however, they still get 5 XP for trying.
+[03/20/16 11:49:41]  [0/0] has challenged Sathiras [3851/6781] in combat and lost! 0 days, 00:00:41 is added to 's clock.  gets 1 XP and Sathiras gets 4 XP.  has 0% of their Life remaining.
+[03/20/16 11:59:43] Leviathan [6013/19724] has attacked a Ghost [666/8000] and killed it! 0 days, 22:19:55 is removed from Leviathan's clock. Leviathan gets 3 XP.
+[03/20/16 11:59:55] Leviathan [16220/19724] tried to slay a Yellow_Dragon [4125/7500] and won! 0 days, 10:29:45 is removed from Leviathan's clock. Leviathan gets 5 XP. Each item gains 3 points.
+[03/20/16 12:01:10] Leviathan [12608/25531] has challenged Svag [7138/17839] and won! 1 day, 09:20:45 is removed from Leviathan's clock. Leviathan gets 3 XP, Svag gets 2 XP. Svag has 97% of their Life remaining.
+[03/20/16 12:01:13] Leviathan [7053/25531] has challenged Svag [10166/17839] and lost! 0 days, 14:34:59 is added to Leviathan's clock. Leviathan gets 1 XP, Svag gets 4 XP. Leviathan has 96% of their Life remaining.
+[03/20/16 12:01:16] Leviathan [7827/25531] has challenged Svag [2973/17839] and won! 1 day, 05:31:51 is removed from Leviathan's clock. Leviathan gets 5 XP, Svag gets 2 XP. Svag has 96% of their Life remaining.
+[03/20/16 12:01:26] Leviathan [12543/25531] has challenged Svag [9398/17839] and won! 0 days, 23:19:44 is removed from Leviathan's clock. Leviathan gets 3 XP, Svag gets 2 XP. Svag has 96% of their Life remaining.
+[03/20/16 12:01:29] Leviathan [25208/25531] has challenged Svag [4666/17839] and won! 0 days, 19:07:47 is removed from Leviathan's clock. Leviathan gets 5 XP, Svag gets 1 XP. Svag has 97% of their Life remaining.
