@@ -832,8 +832,11 @@ sub parse {
                         "Next level in ".Simulation::duration($Simulation::rps{$username}{next})."\n";
                     my $tempsum = Equipment::itemsum($username,0);
                     my $now = time();
-                    if (!exists($Simulation::rps{$username}{power_cooldown})) {
-                        $Simulation::rps{$username}{power_cooldown} = $now;
+		    my $power_cooldown = $Simulation::rps{$username}{power_cooldown} - $now;
+		    if ($power_cooldown > 0) {
+	                $next_power = Simulation::duration($power_cooldown);
+		    } else {
+                        $next_power = "0 days, 0:00:00";
                     }
                         $whoami .= "Items: ring[".($Simulation::rps{$username}{item}{ring})."], ".
                         "amulet[".($Simulation::rps{$username}{item}{amulet})."], ".
@@ -854,7 +857,7 @@ sub parse {
                         "Life: $Simulation::rps{$username}{life}. ".
                         "Alignment: $Simulation::rps{$username}{alignment}. ".
                         "Potions: power: $Simulation::rps{$username}{powerpotion}, mana: $Simulation::rps{$username}{mana} \n".
-                        "Potion Cooldowns: power: ".Simulation::duration(int($Simulation::rps{$username}{power_cooldown} - $now))." \n";
+                        "Potion Cooldowns: power: $next_power \n";
                         $whoami .= "Lotto 1: $Simulation::rps{$username}{lotto11}, $Simulation::rps{$username}{lotto12} and $Simulation::rps{$username}{lotto13}. ".
                         "Lotto 2: $Simulation::rps{$username}{lotto21}, $Simulation::rps{$username}{lotto22} and $Simulation::rps{$username}{lotto23}. ".
                         "Lotto 3: $Simulation::rps{$username}{lotto31}, $Simulation::rps{$username}{lotto32} and $Simulation::rps{$username}{lotto33}. ".
