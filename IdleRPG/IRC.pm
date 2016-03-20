@@ -251,11 +251,13 @@ sub parse {
 
                         my $tempsum = Equipment::itemsum($u[$i],0);
 
-                        IRC::chanmsg("#" .($i + 1). " $u[$i]".
+                        $top .= "#" .($i + 1). " $u[$i]".
                         " | Lvl $Simulation::rps{$u[$i]}{level} | TTL " .(Simulation::duration($Simulation::rps{$u[$i]}{next})).
                         " | Align $Simulation::rps{$u[$i]}{alignment} | Ability $Simulation::rps{$u[$i]}{ability}".
-                        " | Life $Simulation::rps{$u[$i]}{life} | Sum $tempsum");
+                        " | Life $Simulation::rps{$u[$i]}{life} | Sum $tempsum \n";
                     }
+
+                    IRC::chanmsg("$top");
                 }
             }
             elsif ($arg[3] eq "rehash") {
