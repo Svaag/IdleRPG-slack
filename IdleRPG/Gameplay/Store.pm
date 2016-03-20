@@ -226,13 +226,13 @@ sub buy_item {
 
 sub buy_pots {
     my $u = shift;
-    if($Simulation::rps{$u}{gold} >= 100) {
-        $Simulation::rps{$u}{gold} -= 100;
+    if($Simulation::rps{$u}{gold} >= 1000) {
+        $Simulation::rps{$u}{gold} -= 1000;
         $Simulation::rps{$u}{powerpotion} += 1;
-        IRC::privmsg("You just bought yourself a powerpotion. In the next fight your powers will be increased.", $Simulation::rps{$u}{nick});
+        IRC::privmsg("You just bought a Power Potion. These can be used once per day to reset a cooldown.", $Simulation::rps{$u}{nick});
     }
     else {
-        IRC::privmsg("You don't have enough gold. You need: 100 ", $Simulation::rps{$u}{nick});
+        IRC::privmsg("You don't have enough gold. You need: 1000 ", $Simulation::rps{$u}{nick});
     }
 }
 

@@ -1,7 +1,27 @@
 package Equipment;
 
-#use IdleRPG::IRC;
-#use IdleRPG::Simulation;
+sub use_power_potion {
+    my $user = shift;
+    my $now = time();
+    my $slack_name = $Simulation::rps{$user}{nick};
+    if ($Simulation::rps{$user}{power_cooldown} < $now) {
+        if ($Simulation::rps{$user}{powerpotion} != 0) {
+            my @cooldowns = ("bt", "tt", "dragontm", "regentm");
+            my %names = (bt => "Battle Time", tt => "Tournament Time", dragontm => "Dragon Slay", regentm => "Creep Attack");
+            my $cooldown = $cooldowns[ rand @cooldowns ];
+            my $realname = $names{$cooldown};
+            $Simulation::rps{$user}{$cooldown} = 0;
+            $Simulation::rps{$user}{powerpotion} -= 1;
+            $Simulation::rps{$user}{power_cooldown} = int($now + 86400);
+            return $realname;
+        } else {
+            IRC::privmsg("You do not have any power potions.", $user);
+        }
+    } else {
+        IRC::privmsg("You still have ".Simulation::duration(int($Simulation::rps{$user}{power_cooldown} - $now))." cooldown on Power Potion.", $slack_name);
+    }
+     
+}
 
 sub itemsum {
     my $user = shift;

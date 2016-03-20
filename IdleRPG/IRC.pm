@@ -446,6 +446,14 @@ sub parse {
             }
             elsif ($arg[3] eq "rest") {
                 Store::rest("$username");
+            } 
+            elsif ($arg[3] eq "use") { 
+                if ($arg[4] eq "powerpotion") {
+                    my $cooldown = Equipment::use_power_potion($username);
+                    if ($cooldown) {
+                        IRC::chanmsg("$username has used a Power Potion and reset their $cooldown timer!"); 
+                    }
+                }
             }
 
             elsif ($arg[3] eq "buy") {
@@ -823,6 +831,7 @@ sub parse {
                         $Simulation::rps{$username}{level}." $Simulation::rps{$username}{class}. ".
                         "Next level in ".Simulation::duration($Simulation::rps{$username}{next})."\n";
                     my $tempsum = Equipment::itemsum($username,0);
+                    my $now = time();
                         $whoami .= "Items: ring[".($Simulation::rps{$username}{item}{ring})."], ".
                         "amulet[".($Simulation::rps{$username}{item}{amulet})."], ".
                         "charm[".($Simulation::rps{$username}{item}{charm})."], ".
@@ -841,7 +850,8 @@ sub parse {
                         "XP: $Simulation::rps{$username}{experience}. ".
                         "Life: $Simulation::rps{$username}{life}. ".
                         "Alignment: $Simulation::rps{$username}{alignment}. ".
-                        "Potions: power: $Simulation::rps{$username}{powerpotion}, mana: $Simulation::rps{$username}{mana} \n";
+                        "Potions: power: $Simulation::rps{$username}{powerpotion}, mana: $Simulation::rps{$username}{mana} \n".
+                        "Potion Cooldowns: power: ".Simulation::duration(int($Simulation::rps{$username}{power_cooldown} - $now))." \n";
                         $whoami .= "Lotto 1: $Simulation::rps{$username}{lotto11}, $Simulation::rps{$username}{lotto12} and $Simulation::rps{$username}{lotto13}. ".
                         "Lotto 2: $Simulation::rps{$username}{lotto21}, $Simulation::rps{$username}{lotto22} and $Simulation::rps{$username}{lotto23}. ".
                         "Lotto 3: $Simulation::rps{$username}{lotto31}, $Simulation::rps{$username}{lotto32} and $Simulation::rps{$username}{lotto33}. ".
