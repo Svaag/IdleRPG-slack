@@ -83,17 +83,17 @@ my $cond = AnyEvent->condvar;
     });
 
     # Handle User Typing events
-    $slack_rtm->on('user_typing' => sub {
-        my ($slack_rtm, $typing) = @_;
-        my $username = get_username_from_id($typing->{user});
-        my $channel_id = $typing->{channel};
+    #$slack_rtm->on('user_typing' => sub {
+    #    my ($slack_rtm, $typing) = @_;
+    #my $username = get_username_from_id($typing->{user});
+    #my $channel_id = $typing->{channel};
 
         # Put any player typing in game channel under watch
-        if ($channel_id eq $IdleRPG::Slack::slack_info{game_chan_id}) {
-            Events::watch_player($username);
-        }
+	#if ($channel_id eq $IdleRPG::Slack::slack_info{game_chan_id}) {
+	#   Events::watch_player($username);
+	#}
 
-    });
+    #});
 
     # Handle Error responses from RTM api
     $slack_rtm->on('error' => sub { 
