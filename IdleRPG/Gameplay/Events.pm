@@ -1,19 +1,5 @@
 package Events;
 
-# Without these, our little characters will be a tad bit lost!
-use constant {
-    # Locations
-    TOWN   => 0,
-    WORK   => 1,
-    FOREST => 2,
-​
-    # Classes/Abilities
-    BARBARIAN => 'b',
-    PALADIN   => 'p',
-    ROGUE     => 'r',
-    WIZARD    => 'w',
-};
-
 #use IdleRPG::IRC;
 #use IdleRPG::Simulation;
 
@@ -681,6 +667,29 @@ sub agonize_player {
 
     IRC::privmsg($priv_msg,$slack_name);
 
+}
+
+
+our $slay_fest = 0;
+our $slay_color = "";
+our $slay_num = 0;
+sub slay_fest {
+if ($slay_fest == 0) {    
+    my $user = shift;
+    my $dragon = shift;
+    my ($dragon_type) = split /_/, $dragon;
+    $slay_color = $dragon_type;
+    $slay_num = int(rand(4)+1);
+        IRC::chanmsg("$user has slain an extremely powerful $dragon and angered the $dragon_type flight! \n".
+                     "Wings roar in the distance and an attack is imminent. \n".
+                     "There seem to be $slay_num dragons on their way!");
+        my @playersReset = grep { $Simulation::rps{$_}{level} > 34} keys(%Simulation::rps);
+        for my $i (0...$#playersReset) {
+            $Simulation::rps{$playersReset[$i]}{olddragontm} = $Simulation::rps{$playersReset[$i]}{dragontm};
+            $Simulation::rps{$playersReset[$i]}{dragontm} = 0;
+        }
+    }
+    $slay_fest = 1;
 }
 
 1;

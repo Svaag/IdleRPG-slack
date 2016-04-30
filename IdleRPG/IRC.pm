@@ -440,6 +440,15 @@ sub parse {
                     my $dragontm = $Simulation::rps{$username}{dragontm}-time();
                     IRC::privmsg("You are not recovered from your last slay, wait ".Simulation::duration($dragontm).".", $usernick, 1);
                 }
+                elsif ($Events::slay_fest == 1) {
+                    my ($color) = split /_/, $arg[4];
+                    if ($color ne $Events::slay_color) {
+                        IRC::privmsg("The realm is being attacked by the $Events::slay_color dragon flight and your assistance is needed!\n".
+                                     "There are $Events::slay_num $Events::slay_color Dragons remaining. Either help kill them, or wait for them to leave!", $usernick);
+                    } else {
+                        PVE::dragon_fight($username, $arg[4]);
+                    }
+                }
                 else {
                     PVE::dragon_fight($username, $arg[4]);
                 }

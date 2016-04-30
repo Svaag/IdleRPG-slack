@@ -126,6 +126,23 @@ sub dragon_fight {
         Equipment::item_special_proc($ThisMe,$goldamount,"Gold");
         Equipment::item_special_proc($ThisMe,$dragon{$ThisOpp}{gem},"Gem");
         Equipment::item_special_proc($ThisMe,$gain,"TTL");
+        my $percentile = int(($ThisOppRoll/$ThisOppSum) * 100); 
+        if ($Events::slay_fest == 1) {
+            $Events::slay_num -= 1; 
+            if ($Events::slay_num >= 1) {
+                IRC::chanmsg("There are $Events::slay_num $Events::slay_color Dragons remaining!");
+            } else {
+                $Events::slay_fest = 0;
+                IRC::chanmsg("The last invading dragon has been slain and peace has been restored to the realm.");
+                my @playersRestore = grep { $Simulation::rps{$_}{level} > 34} keys(%Simulation::rps);
+                for my $i (0...$#playersRestore) {
+                    $Simulation::rps{$playersRestore[$i]}{dragontm} = $Simulation::rps{$playersRestore[$i]}{olddragontm};
+                }
+            }
+        }
+        if ($percentile > 50) {
+            Events::slay_fest($ThisMe, $ThisOpp);
+        }
     }
     else {
         $gain = int((($Simulation::rps{$ThisMe}{next} * .05)/4)*$AddDamage);
