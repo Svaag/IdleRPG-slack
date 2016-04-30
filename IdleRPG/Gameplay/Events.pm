@@ -1,7 +1,18 @@
 package Events;
 
-#use IdleRPG::IRC;
-#use IdleRPG::Simulation;
+# Without these, our little characters will be a tad bit lost!		
+use constant {		
+    # Locations		
+    TOWN   => 0,		
+    WORK   => 1,		
+    FOREST => 2,		
+    # Classes/Abilities		
+    BARBARIAN => 'b',		
+    PALADIN   => 'p',		
+    ROGUE     => 'r',		
+    WIZARD    => 'w',		
+};		
+ 
 
 sub moveplayers {
     return unless $IdleRPG::Slack::lasttime > 1;
