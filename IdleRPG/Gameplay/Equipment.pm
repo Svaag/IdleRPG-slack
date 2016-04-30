@@ -186,6 +186,19 @@ sub item_special_find {
         elsif ($Simulation::rps{$ThisPlayer}{Special03} eq "0") {
             $Simulation::rps{$ThisPlayer}{Special03} = $type;
             IRC::chanmsg("$ThisPlayer received a $type Stone!");
+        } else {
+                my @locations = (
+                    'on a hilltop far in the horizon',
+                    'just outside a nearby forest',
+                    'not very far away from them',
+                    'outside a nearby cave',
+                    'in a large field with very tall grass',
+                    );
+                my $location_message = $locations[int(rand(@locations))];
+                IRC::chanmsg("$ThisPlayer notices a shadowy figure standing $location_message.\n".
+                             "Is it watching? It certainly feels that way.\n".
+                             "$ThisPlayer looks away for a second and when they look back, the shadow has disappeared.\n".
+                             "Maybe it was nothing.");
         }
     }
     else {
