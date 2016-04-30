@@ -84,7 +84,7 @@ sub dragon_fight {
     else {
         $ThisMyRoll = int(rand($ThisMyRoll));
     }
-    $ThisOppRoll = int(rand($ThisOppRoll) + $MinSum);
+    $ThisOppRoll = int(rand($ThisOppRoll-$MinSum) + $MinSum);
     my $MyXP = int(rand(9)+1);
     my $OppXP = int(rand(4)+1);
     my $ThisDamage = 1;
