@@ -140,7 +140,7 @@ sub dragon_fight {
                 }
             }
         }
-        if ($percentile > 50) {
+        if ($percentile > 95) {
             Events::slay_fest($ThisMe, $ThisOpp);
         }
     }
