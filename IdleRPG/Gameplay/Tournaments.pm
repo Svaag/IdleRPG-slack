@@ -234,7 +234,7 @@ sub deathmatch_battle {
          --$supunct;
       }
       if (@deathmatch > 1) {
-         IRC::chanmsg(join(", ",@deathmatch)." progess to round $sess of the Death Match.");
+         IRC::chanmsg(join(", ",@deathmatch)." progress to round $sess of the Death Match.");
       }
       RNG::fisher_yates_shuffle( \@deathmatch );
    }
@@ -441,7 +441,7 @@ sub abilitywar {
   my @Abilities = ("b","p","w","r");
   my $ThisAbility = $Abilities[rand(@Abilities)];
   @abilitywar = grep { $Simulation::rps{$_}{online} && $Simulation::rps{$_}{level} > 15 && $Simulation::rps{$_}{gold} > 100 && $Simulation::rps{$_}{life} > 20 &&
-    $Simulation::rps{$_}{bt} < time() && time()-$Simulation::rps{$_}{last_login} > 3600 && $Simulation::rps{$_}{ability} eq $ThisAbility} keys %Simulation::rps;
+    time()-$Simulation::rps{$_}{last_login} > 3600 && $Simulation::rps{$_}{ability} eq $ThisAbility} keys %Simulation::rps;
 
   my $TournyAmt = $Tournaments::TournyLvl;
   if (@abilitywar < 32) {
@@ -558,8 +558,7 @@ sub abilitywar_battle {
       $Simulation::rps{$abilitywar[0]}{regentm} = 0;
       $Simulation::rps{$abilitywar[0]}{dragontm} = 0;
       $Simulation::rps{$abilitywar[0]}{aw} += 1;
-      $Simulation::rps{$abilitywar[0]}{bt} = time() + 86400;
-      $abilitywartime = time() + 5400 + int(rand(3600));
+      $abilitywartime = time() + 21600 + int(rand(3600));
       undef @abilitywar;
    }
     else {
